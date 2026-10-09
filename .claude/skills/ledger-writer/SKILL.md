@@ -1,12 +1,12 @@
 ---
 name: ledger-writer
 description: How this repo writes to Claude.Agent.Ledger — the writer side only (Add-LedgerEntry -Spool), the entry shape the keeper accepts, and what the hooks must never do. Copied from Claude.Agent.Ledger's README; read-only here. Use whenever a hook or a test writes or reads a policy.* entry, or the ledger fields {phase, tool, kindAction, path, rule, reason, command} change.
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Writing to Claude.Agent.Ledger from the policy hooks
 
-Copied from Claude.Agent.Ledger 0.2.1 (`README.md`, Two roles and Chain format). Pester checks that `version`
+Copied from Claude.Agent.Ledger 0.2.2 (`README.md`, Two roles and Chain format). Pester checks that `version`
 above equals Claude.Agent.Ledger's `ModuleVersion`; when it does not, recopy from that README, do not edit here.
 
 ## The writer side is all the hooks get

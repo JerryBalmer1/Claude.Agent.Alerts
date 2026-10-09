@@ -19,8 +19,9 @@ All are expected side by side (e.g. `C:\__Code\`).
 - `tests/` Pester 5+. Run through `tests/Invoke-Tests.ps1`. `tests/fixtures/smoke.ledger.jsonl` is a copy of a
   Claude.Agent smoke ledger; the other fixtures come from `tests/fixtures/New-Fixtures.ps1`.
 - `docs/design.md` numbered decisions. Add an entry when you make a decision someone could reasonably reverse.
-- `.claude/skills/`: `readme` (this repo's), `ledger-writer` (copied from Claude.Agent.Policy), `graph-node`
-  (copied from Graph.Node). Copies are read-only here; recopy, do not edit.
+- `.claude/skills/`: `readme` (this repo's), `ledger-writer` (copied from Claude.Agent.Policy), `git-guard`,
+  `run-report` and `graph-node` (copied from Graph HEAD; `tests/Skills.Tests.ps1`). Copies are read-only here; recopy,
+  do not edit.
 
 ## Commands
 

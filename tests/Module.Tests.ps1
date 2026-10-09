@@ -10,8 +10,8 @@ BeforeAll {
 }
 
 Describe 'Module' {
-    It 'is version 0.1.1 and needs PowerShell 7.4' {
-        $Manifest.ModuleVersion | Should -Be '0.1.1'
+    It 'is version 0.1.2 and needs PowerShell 7.4' {
+        $Manifest.ModuleVersion | Should -Be '0.1.2'
         $Manifest.PowerShellVersion | Should -Be '7.4'
     }
 
@@ -48,16 +48,5 @@ Describe 'repo skills' {
         Get-SkillVersion 'ledger-writer' | Should -Be (Import-PowerShellDataFile -Path $LedgerManifest).ModuleVersion -Because 'recopy .claude/skills/ledger-writer from Claude.Agent.Policy when Claude.Agent.Ledger''s version changes'
         (Get-Content (Join-Path $RepoRoot '.claude/skills/ledger-writer/SKILL.md') -Raw) -replace "`r`n", "`n" |
             Should -Be ((Get-Content $policyCopy -Raw) -replace "`r`n", "`n") -Because 'it is a copy; do not edit it here'
-    }
-
-    It 'graph-node (copied from Graph.Node) front-matter version equals Graph.Node''s own skill' {
-        # Graph.Node pins its skill to its ModuleVersion; the copy here is pinned to that skill (design 6).
-        $source = Join-Path $GraphNodeRoot '.claude/skills/graph-node/SKILL.md'
-        if (-not (Test-Path -LiteralPath $source)) {
-            Set-ItResult -Skipped -Because "Graph.Node is not checked out at $GraphNodeRoot"
-            return
-        }
-        $front = [regex]::Match((Get-Content -LiteralPath $source -Raw), '\A---\r?\n(.*?)\r?\n---', 'Singleline').Groups[1].Value
-        Get-SkillVersion 'graph-node' | Should -Be ([regex]::Match($front, '(?m)^version:\s*(\S+)\s*$').Groups[1].Value) -Because 'recopy .claude/skills/graph-node from Graph.Node when its version changes'
     }
 }

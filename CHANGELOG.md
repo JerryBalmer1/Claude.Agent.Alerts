@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 - 2026-10-08
+
+- 0.1.2: git-guard hook; run-report 0.2.2; graph-node 0.2.1
+- Skills git-guard 0.1.0, run-report 0.2.2 and graph-node 0.2.1 copied from Graph HEAD; git-guard's PreToolUse hook merged into `.claude/settings.json`. `tests/Skills.Tests.ps1` checks each copy's version and full text against `git show HEAD:` in Graph, and the hook's exit codes (0, 0, 2, 2, 2, 2 for git status, git add, git commit, git push, git tag, gh pr merge).
+- Skill `readme` at 0.1.2 with the module; `ledger-writer` recopied at Claude.Agent.Ledger 0.2.2 (version only). The Module test that pinned graph-node to Graph.Node's copy is replaced by Skills.Tests (source is Graph).
+
 ## 0.1.1 - 2026-10-09
 
 - `alert:` and `ledger:` are registered to Claude.Agent.Alerts in Graph.Node 0.2.1 (design 6); skill `graph-node`

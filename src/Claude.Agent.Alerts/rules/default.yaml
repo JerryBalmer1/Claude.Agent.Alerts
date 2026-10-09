@@ -1,0 +1,44 @@
+# Claude.Agent.Alerts default rules. Checked by Test-AlertRule; see README "Rules" for the format.
+# when.kind is a ledger entry kind (policy.deny), a Kind.action (Shell.exec: matches policy.* entries with that
+# body.kindAction), or seq-gap (raised by the seq walk, not by an entry kind). when.field is a dotted path into
+# the entry (body.command); when.match is a .NET regex tested against that field's value as a string.
+rules:
+  - name: policy-deny
+    when:
+      kind: policy.deny
+    severity: error
+    message: the policy denied a tool call
+
+  - name: seq-gap
+    when:
+      kind: seq-gap
+    severity: error
+    message: seq does not follow the previous writer line; a spooled entry was lost, repeated or forged
+
+  - name: policy-witness
+    when:
+      kind: policy.witness
+    severity: warn
+    message: a witnessed tool call ran
+
+  - name: shell-network-or-interpreter
+    when:
+      kind: Shell.exec
+      field: body.command
+      match: '(?i)(^|[\s;&|(/])(curl|wget|nc|python[0-9.]*|node|pwsh\s+-c(ommand)?)(\s|$)'
+    severity: warn
+    message: shell could bypass delete classification
+
+  - name: agent-run-failed
+    when:
+      kind: agent.run
+      field: body.exitCode
+      match: '^(?!0$)'
+    severity: error
+    message: claude -p exited non-zero
+
+  - name: ledger-rejected
+    when:
+      kind: ledger.rejected
+    severity: error
+    message: the keeper rejected a spooled line

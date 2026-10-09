@@ -1,0 +1,29 @@
+module: Claude.Agent.Alerts
+version: 0.1.0
+kinds:
+  Finding:
+    description: One rule matching one ledger entry (or one seq gap). Raised by Invoke-LedgerAlert.
+    idRule: "alert:<rule>:<seq>, or alert:<rule>:line-<n> for a ledger line without seq"
+    properties:
+      - { name: rule, type: string, required: true, description: rule name from the rules file }
+      - { name: severity, type: string, required: true, description: "info, warn or error" }
+      - { name: message, type: string, required: true }
+      - { name: ledgerLine, type: integer, required: true, description: 1-based line in ledger.jsonl }
+      - { name: ledgerSeq, type: integer, description: "the entry's writer seq; absent for keeper lines" }
+      - { name: detail, type: string, description: "the field tested and its value, or the expected and found seq" }
+    display: { color: "#d64545", shape: diamond, label: "{properties.rule}" }
+  LedgerEntry:
+    description: A Claude.Agent.Ledger entry that raised at least one finding. Read from ledger.jsonl, never written.
+    idRule: "ledger:<seq>, or ledger:line-<n> for a keeper line without seq (ledger.rejected)"
+    properties:
+      - { name: line, type: integer, required: true }
+      - { name: seq, type: integer }
+      - { name: kind, type: string }
+      - { name: stamp, type: string, description: "the entry's own stamp, as the ledger holds it" }
+      - { name: body, type: object }
+    display: { color: "#6b7a8f", shape: round-rectangle, label: "{name}" }
+edgeKinds:
+  raised-by:
+    description: The finding was raised by this ledger entry.
+    from: [Finding]
+    to: [LedgerEntry]

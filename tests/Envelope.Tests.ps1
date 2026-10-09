@@ -21,7 +21,7 @@ Describe 'Export-LedgerAlert' {
         $g = Get-Content $file.FullName -Raw | ConvertFrom-Json -AsHashtable
         $g.schema | Should -Be 'graph/1'
         $g.module | Should -Be 'Claude.Agent.Alerts'
-        $g.version | Should -Be '0.1.0'
+        $g.version | Should -Be '0.1.1'
         $g.ontology | Should -Be 'ontology.yaml'
         $g.root | Should -Be ([System.IO.Path]::GetFullPath($ledger))
         @($g.nodes | Where-Object kind -eq 'Finding') | Should -HaveCount 7
@@ -52,10 +52,42 @@ Describe 'Export-LedgerAlert' {
         ($output -join '').Trim() | Should -Be '[]'
     }
 
-    It 'the shipped ontology.yaml validates with cmd/graphnode validate-ontology' {
+    It 'the shipped ontology.yaml validates with cmd/graphnode validate-ontology, without warnings' {
         if (-not $Cli) { Set-ItResult -Inconclusive -Because 'no graphnode binary in Graph.Node and no go to run cmd/graphnode'; return }
         $output = & $Cli @('validate-ontology', (Join-Path $ModuleRoot 'ontology.yaml'))
         $LASTEXITCODE | Should -Be 0 -Because ($output -join "`n")
+        ($output -join '').Trim() | Should -Be '[]'
+    }
+
+    It 'the <Name> envelope validates with graphnode validate --ontology: no problem, no warning' -ForEach @(
+        @{ Name = 'smoke' }, @{ Name = 'rules' }
+    ) {
+        if (-not $Cli) { Set-ItResult -Inconclusive -Because 'no graphnode binary in Graph.Node and no go to run cmd/graphnode'; return }
+        $ledger = Join-Path $Fixtures "$Name.ledger.jsonl"
+        $dir = Join-Path $TestDrive "ont-$Name"
+        $file = Invoke-LedgerAlert -LedgerPath $ledger | Export-LedgerAlert -OutDir $dir -Layer $Layer -LedgerPath $ledger
+        $output = & $Cli @('validate', $file.FullName, '--ontology', (Join-Path $dir 'ontology.yaml'))
+        $LASTEXITCODE | Should -Be 0 -Because ($output -join "`n")
+        ($output -join '').Trim() | Should -Be '[]'
+    }
+
+    It 'every id it emits has the shape Graph.Node registers for alert: and ledger: (design 6)' {
+        if (-not (Get-Command Test-GraphId -ErrorAction Ignore)) { Set-ItResult -Inconclusive -Because 'this GraphNode has no Test-GraphId (0.2.0+)'; return }
+        $owners = @{}
+        foreach ($p in Get-GraphIdPrefix) { $owners[$p.Prefix] = $p.Owner }
+        $owners['alert:'] | Should -Be 'Claude.Agent.Alerts'
+        $owners['ledger:'] | Should -Be 'Claude.Agent.Alerts'
+        $ids = foreach ($name in 'smoke', 'rules', 'seqgap') {
+            $file = Invoke-LedgerAlert -LedgerPath (Join-Path $Fixtures "$name.ledger.jsonl") | Export-LedgerAlert -OutDir (Join-Path $TestDrive "ids-$name") -Layer $Layer
+            (Get-Content $file.FullName -Raw | ConvertFrom-Json).nodes.id
+        }
+        @($ids | Where-Object { $_ -like 'alert:*:line-*' }) | Should -Not -BeNullOrEmpty -Because 'the keeper-line form must be covered'
+        @($ids | Where-Object { $_ -like 'ledger:line-*' }) | Should -Not -BeNullOrEmpty
+        foreach ($id in $ids) {
+            $prefix = $id.Substring(0, $id.IndexOf(':'))
+            $prefix | Should -BeIn @('alert', 'ledger')
+            Test-GraphId -Prefix $prefix -Id $id | Should -BeTrue -Because "$id must have the registered $prefix`: shape"
+        }
     }
 
     It 'writes a valid empty layer for no findings' {

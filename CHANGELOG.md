@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 - 2026-10-09
+
+- `alert:` and `ledger:` are registered to Claude.Agent.Alerts in Graph.Node 0.2.1 (design 6); skill `graph-node`
+  recopied at 0.2.1; LedgerEntry's display shape is `square` (`round-rectangle` is a 0.1.0 name Graph.Node 0.2.x
+  warns about); Pester checks every emitted id against `Test-GraphId` and each envelope with
+  `graphnode validate --ontology` (`[]`). No id changed.
+
 ## 0.1.0 - 2026-10-08
 
 - `Invoke-LedgerAlert -LedgerPath [-Rules] [-FromSeq]`: findings, in ledger order, from a ledger read without

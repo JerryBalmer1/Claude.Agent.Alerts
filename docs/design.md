@@ -85,19 +85,23 @@ Findings are nodes, not GraphNode `findings` entries, so the portal can select, 
 node; GraphNode's `findings` stay for problems with a graph. Severity keeps the rules' `warn`, a property, not
 GraphNode's finding severity.
 
-Prefixes, against Graph.Node's `schemas/ids.md` (Graph.Node 0.2.0, in that repo's working tree when this was
-written). Neither collides with a registered prefix (`fs:`, `ui:`, `run:`, `finding:`, `decision:`,
-`notrun:`, `touched:`). Graph.Node is read-only from here; these rows are the proposal to add there, with
-`Get-GraphIdPrefix` and `graph/ids.go`, as its "Adding a prefix" requires:
+Both prefixes are registered in Graph.Node 0.2.1, owner Claude.Agent.Alerts, in `schemas/ids.md`,
+`Get-GraphIdPrefix` and `graph/ids.go`. `Test-GraphId`, `graph.ValidID` and `graphnode check-id` check the
+shapes:
 
 | Prefix | Owner | Shape |
 | --- | --- | --- |
-| `alert:` | Claude.Agent.Alerts | `alert:<rule name>:<seq>`, or `alert:<rule name>:line-<n>`; rule name `^[a-z][a-z0-9-]*$` |
-| `ledger:` | Claude.Agent.Alerts | `ledger:<seq>`, seq a positive integer, or `ledger:line-<n>` for a ledger line without seq |
+| `alert:` | Claude.Agent.Alerts | `alert:<rule>:<seq>`, or `alert:<rule>:line-<n>` for a ledger line without seq; rule lower case, `^[a-z][a-z0-9-]*$` |
+| `ledger:` | Claude.Agent.Alerts | `ledger:<seq>`, or `ledger:line-<n>` for a ledger line without seq |
+
+seq and n are positive integers. The rule name is the rules file's `name`, which `Test-AlertRule` already holds to
+the same pattern, so every rule that loads gives conforming ids. Pester exports the fixtures and requires every
+id to pass `Test-GraphId`, and each envelope to pass `graphnode validate --ontology` with no problem and no warning.
 
 Ids are stable within one ledger, which is append-only. They are not stable across ledgers: `Invoke-Build
 Clean` drops the volume and seq starts at 1 again. The envelope's `root` (the ledger path) and `layer` say which
-ledger. If Claude.Agent.Ledger ever emits a layer of its own, `ledger:` should move to it as owner.
+ledger. `ledger:` belongs to the module that issues it; Claude.Agent.Ledger emits no layer, and a registered
+prefix is never moved to another owner once ids have been issued with it (Graph.Node design 14).
 
 ## 7. Fixtures are replayed through the real keeper; skills are copies with version checks
 

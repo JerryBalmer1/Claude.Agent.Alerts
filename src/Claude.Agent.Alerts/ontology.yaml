@@ -1,5 +1,5 @@
 module: Claude.Agent.Alerts
-version: 0.1.0
+version: 0.1.1
 kinds:
   Finding:
     description: One rule matching one ledger entry (or one seq gap). Raised by Invoke-LedgerAlert.
@@ -21,7 +21,7 @@ kinds:
       - { name: kind, type: string }
       - { name: stamp, type: string, description: "the entry's own stamp, as the ledger holds it" }
       - { name: body, type: object }
-    display: { color: "#6b7a8f", shape: round-rectangle, label: "{name}" }
+    display: { color: "#6b7a8f", shape: square, label: "{name}" }
 edgeKinds:
   raised-by:
     description: The finding was raised by this ledger entry.

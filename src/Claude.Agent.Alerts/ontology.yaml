@@ -1,5 +1,5 @@
 module: Claude.Agent.Alerts
-version: 0.1.2
+version: 0.1.3
 kinds:
   Finding:
     description: One rule matching one ledger entry (or one seq gap). Raised by Invoke-LedgerAlert.

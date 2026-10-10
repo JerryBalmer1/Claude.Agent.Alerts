@@ -21,7 +21,7 @@ Describe 'Export-LedgerAlert' {
         $g = Get-Content $file.FullName -Raw | ConvertFrom-Json -AsHashtable
         $g.schema | Should -Be 'graph/1'
         $g.module | Should -Be 'Claude.Agent.Alerts'
-        $g.version | Should -Be '0.1.2'
+        $g.version | Should -Be '0.1.3'
         $g.ontology | Should -Be 'ontology.yaml'
         $g.root | Should -Be ([System.IO.Path]::GetFullPath($ledger))
         @($g.nodes | Where-Object kind -eq 'Finding') | Should -HaveCount 7

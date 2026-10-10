@@ -1,7 +1,7 @@
 ---
 name: readme
 description: Keep README.md, the usage door to Claude.Agent.Alerts, in step with the code. Use whenever an exported function or its parameters change, the rules format or the shipped rules change, the finding or envelope shape (ids, Kinds, edge, properties) changes, ontology.yaml changes, an Invoke-Build task or requirement changes, or the version changes, and before reporting any task that touched one.
-version: 0.1.2
+version: 0.1.3
 ---
 
 # README

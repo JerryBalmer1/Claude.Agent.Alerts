@@ -1,12 +1,12 @@
 ---
 name: ledger-writer
 description: How this repo writes to Claude.Agent.Ledger — the writer side only (Add-LedgerEntry -Spool), the entry shape the keeper accepts, and what the hooks must never do. Copied from Claude.Agent.Ledger's README; read-only here. Use whenever a hook or a test writes or reads a policy.* entry, or the ledger fields {phase, tool, kindAction, path, rule, reason, command} change.
-version: 0.2.2
+version: 0.2.5
 ---
 
 # Writing to Claude.Agent.Ledger from the policy hooks
 
-Copied from Claude.Agent.Ledger 0.2.2 (`README.md`, Two roles and Chain format). Pester checks that `version`
+Copied from Claude.Agent.Ledger 0.2.5 (`README.md`, Two roles and Chain format). Pester checks that `version`
 above equals Claude.Agent.Ledger's `ModuleVersion`; when it does not, recopy from that README, do not edit here.
 
 ## The writer side is all the hooks get
@@ -28,8 +28,10 @@ The hooks spool to `$env:CLAUDE_AGENT_SPOOL`, else `/spool`; never point them at
 
 - `kind`: free-form dotted name. This repo writes only `policy.allow`, `policy.deny`, `policy.witness`.
 - `body`: the hashtable passed to `Add-LedgerEntry`, as JSON. Keep it a flat hashtable of strings and nulls.
-- The keeper chains the writer's exact bytes; a line that is not exactly `{stamp, kind, body, seq}` becomes a
-  `ledger.rejected` entry carrying the raw text. Never write the spool by hand.
+- `stamp`: UTC, `yyyy-MM-ddTHH:mm:ss.fffffffZ`, set by the writer.
+- The keeper chains the writer's exact bytes. A line that is not a `{stamp, kind, body, seq}` object in that
+  member order, with `stamp` in the writer's format, `kind` a non-empty string, `body` an object and `seq` an
+  integer, becomes a `ledger.rejected` entry carrying the raw text and the reason. Never write the spool by hand.
 
 ## Rules
 

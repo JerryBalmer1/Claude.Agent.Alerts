@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 - 2026-10-09
+
+- `ledger-writer` recopied from Claude.Agent.Policy at Claude.Agent.Ledger 0.2.5. Skill `readme` and
+  `ontology.yaml` at 0.1.3 with the module. No code change.
+
 ## 0.1.2 - 2026-10-08
 
 - 0.1.2: git-guard hook; run-report 0.2.2; graph-node 0.2.1

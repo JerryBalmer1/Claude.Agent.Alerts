@@ -10,8 +10,8 @@ BeforeAll {
 }
 
 Describe 'Module' {
-    It 'is version 0.1.2 and needs PowerShell 7.4' {
-        $Manifest.ModuleVersion | Should -Be '0.1.2'
+    It 'is version 0.1.3 and needs PowerShell 7.4' {
+        $Manifest.ModuleVersion | Should -Be '0.1.3'
         $Manifest.PowerShellVersion | Should -Be '7.4'
     }
 
